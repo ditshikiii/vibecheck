@@ -1,5 +1,8 @@
+import os
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
+
 import streamlit as st
-import cv2
+# import cv2  ❌ DIHAPUS
 from deepface import DeepFace
 import numpy as np
 from PIL import Image
@@ -11,7 +14,6 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Urbanist:wght@400;800&display=swap');
 
-    /* BASE CYBERPUNK */
     html, body, [data-testid="stAppViewContainer"] {
         background: #050505;
         font-family: 'Urbanist', sans-serif;
@@ -19,7 +21,6 @@ st.markdown("""
         overflow-x: hidden;
     }
 
-    /* SCANLINE EFFECT */
     body::before {
         content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
         background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
@@ -27,15 +28,13 @@ st.markdown("""
         z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
     }
 
-    /* UHD CAMERA - NO MIRROR */
     video {
-        transform: scaleX(1) !important; /* MATIIN MIRROR */
+        transform: scaleX(1) !important;
         border: 2px solid #00ffcc !important;
         box-shadow: 0 0 20px #00ffcc;
         border-radius: 15px !important;
     }
 
-    /* GLASS CONTAINER */
     .glass-panel {
         background: rgba(10, 10, 10, 0.8);
         border: 1px solid #00ffcc;
@@ -44,7 +43,6 @@ st.markdown("""
         box-shadow: 0 0 40px rgba(0, 255, 204, 0.1);
     }
 
-    /* GLITCH TEXT TITLE */
     .cyber-title {
         font-family: 'Orbitron', sans-serif;
         font-size: 4rem;
@@ -62,7 +60,6 @@ st.markdown("""
         62% { transform: translate(0,0) skew(5deg); }
     }
 
-    /* OUTFIT CARD CYBER */
     .outfit-card {
         background: #111;
         border-left: 5px solid #00ffcc;
@@ -76,7 +73,6 @@ st.markdown("""
         transform: skew(-2deg);
     }
     
-    /* BUTTON */
     .stButton>button {
         background: #00ffcc !important;
         color: black !important;
@@ -88,10 +84,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. MASSIVE DATABASE (10 ITEMS PER VIBE) ---
-# Tip: Ganti URL dengan image baju asli lu
+# --- 2. MASSIVE DATABASE ---
 def get_outfit_data(mood, gender):
-    # Base 10 items template
     base_items = [
         {'name': f'{mood.capitalize()} Look 01', 'img': 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400'},
         {'name': f'{mood.capitalize()} Urban 02', 'img': 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400'},
@@ -110,11 +104,18 @@ def get_outfit_data(mood, gender):
 def analyze_vibe(img):
     try:
         frame = np.array(img)
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        # Paksa deteksi emosi dengan akurasi tinggi
-        res = DeepFace.analyze(frame, actions=['emotion'], detector_backend='opencv', silent=True)
+        frame = frame[:, :, ::-1]  # ✅ GANTI cv2 → manual RGB ke BGR
+
+        res = DeepFace.analyze(
+            frame,
+            actions=['emotion'],
+            detector_backend='opencv',
+            silent=True
+        )
+
         return res[0]['dominant_emotion'], int(res[0]['emotion'][res[0]['dominant_emotion']])
-    except: return None, None
+    except:
+        return None, None
 
 # --- 4. WEB LAYOUT ---
 st.markdown("<h1 class='cyber-title'>VibeCheck AI</h1>", unsafe_allow_html=True)
@@ -145,7 +146,6 @@ with st.container():
             st.markdown("### 🛍 GENERATING_OUTFIT_CATALOG...")
             outfits = get_outfit_data(mood, gender)
             
-            # GRID 3 Kolom biar muat banyak
             cols = st.columns(3)
             for i, item in enumerate(outfits):
                 with cols[i % 3]:
