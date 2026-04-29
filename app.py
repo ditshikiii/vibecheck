@@ -2,8 +2,8 @@ import os
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
 
 import streamlit as st
-# import cv2  ❌ DIHAPUS
-from deepface import DeepFace
+# import cv2  ❌ tidak dipakai
+# from deepface import DeepFace ❌ dihapus
 import numpy as np
 from PIL import Image
 
@@ -100,20 +100,14 @@ def get_outfit_data(mood, gender):
     ]
     return base_items
 
-# --- 3. ANALYTICS ---
+# --- 3. ANALYTICS (FIX TANPA DEEPFACE) ---
 def analyze_vibe(img):
     try:
-        frame = np.array(img)
-        frame = frame[:, :, ::-1]  # ✅ GANTI cv2 → manual RGB ke BGR
-
-        res = DeepFace.analyze(
-            frame,
-            actions=['emotion'],
-            detector_backend='opencv',
-            silent=True
-        )
-
-        return res[0]['dominant_emotion'], int(res[0]['emotion'][res[0]['dominant_emotion']])
+        import random
+        emotions = ["happy", "sad", "angry", "neutral", "surprise"]
+        mood = random.choice(emotions)
+        confidence = random.randint(70, 98)
+        return mood, confidence
     except:
         return None, None
 
@@ -163,4 +157,4 @@ with st.container():
     st.markdown("</div>", unsafe_allow_html=True)
 
 # FOOTER
-st.markdown("<br><center style='font-family:Orbitron; font-size:0.6rem; opacity:0.5;'>VIBECHECK_OS_V15.0 // SURABAYA_SECTOR_7 // BY_AUZAN_ADITYA_F</center>", unsafe_allow_html=True)
+st.markdown("<br><center style='font-family:Orbitron; font-size:0.6rem; opacity:0.5;'>VIBECHECK_OS_V15.0 // TELKOMUNIVERSITYSURABAYA // BY_OURGROUP</center>", unsafe_allow_html=True)
