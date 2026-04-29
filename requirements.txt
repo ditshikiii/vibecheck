@@ -1,0 +1,3 @@
+streamlit==1.57.0
+opencv-python-headless==4.13.0.92
+deepface==0.0.99
