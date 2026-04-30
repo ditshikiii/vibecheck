@@ -1,214 +1,137 @@
-import os
-os.environ["QT_QPA_PLATFORM"] = "offscreen"
-
 import streamlit as st
-import numpy as np
-from PIL import Image
-import time
 import random
+import time
+from PIL import Image
 
 # --- CONFIG ---
-st.set_page_config(page_title="VibeCheck OUTFIT - UHD", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="VibeCheck AI", page_icon="⚡", layout="wide")
 
-# --- STYLE + GLITCH HALUS ---
+# --- STYLE ---
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Urbanist:wght@400;800&display=swap');
-
-html, body, [data-testid="stAppViewContainer"] {
+body, .stApp {
     background: #050505;
-    font-family: 'Urbanist', sans-serif;
     color: #00ffcc;
+    font-family: 'Arial';
 }
 
-/* TITLE */
 .cyber-title {
-    position: relative;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 4rem;
+    font-size: 3.5rem;
     text-align: center;
-    letter-spacing: 5px;
     color: #00ffcc;
+    text-shadow: 0 0 10px #00ffcc;
 }
 
-/* glitch layer */
-.cyber-title::before,
-.cyber-title::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    width: 100%;
-    opacity: 0;
-}
-
-/* merah */
-.cyber-title::before {
-    color: #ff00ff;
-    animation: glitchFlash 6s infinite;
-}
-
-/* biru */
-.cyber-title::after {
-    color: #00ffff;
-    animation: glitchFlash 6s infinite;
-    animation-delay: 0.2s;
-}
-
-/* glitch SEKILAS */
-@keyframes glitchFlash {
-    0%, 92%, 100% {
-        opacity: 0;
-        transform: translate(0);
-    }
-    93% {
-        opacity: 1;
-        transform: translate(-2px, 2px);
-    }
-    95% {
-        opacity: 1;
-        transform: translate(2px, -2px);
-    }
-    97% {
-        opacity: 0;
-        transform: translate(0);
-    }
-}
-
-video {
-    border: 2px solid #00ffcc !important;
-    box-shadow: 0 0 20px #00ffcc;
-    border-radius: 15px !important;
-}
-
-.glass-panel {
-    background: rgba(10, 10, 10, 0.8);
+.glass {
+    background: rgba(0,0,0,0.7);
+    padding: 25px;
+    border-radius: 15px;
     border: 1px solid #00ffcc;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 0 40px rgba(0, 255, 204, 0.1);
 }
 
-.outfit-card {
+.outfit {
     background: #111;
-    border-left: 5px solid #00ffcc;
     padding: 10px;
-    margin-bottom: 20px;
+    border-left: 4px solid #00ffcc;
+    margin-bottom: 15px;
     transition: 0.3s;
 }
 
-.outfit-card:hover {
+.outfit:hover {
     background: #00ffcc;
-    color: black !important;
-    transform: scale(1.05);
-    box-shadow: 0 0 25px #00ffcc;
-}
-
-.stButton>button {
-    background: #00ffcc !important;
-    color: black !important;
-    font-family: 'Orbitron', sans-serif !important;
-    font-weight: bold !important;
-    border: none !important;
+    color: black;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# --- DATA ---
-def get_outfit_data(mood, gender):
-    return [
-        {'name': f'{mood.capitalize()} Look {i}', 'img': 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400'}
-        for i in range(1, 10)
-    ]
+# --- VIBE SYSTEM ---
+def analyze_vibe():
+    vibes = ["happy", "sad", "angry", "neutral", "confident", "chill"]
+    return random.choice(vibes), random.randint(75, 98)
 
-# --- ANALISIS ---
-def analyze_vibe(img):
-    emotions = ["happy", "sad", "angry", "neutral", "surprise"]
-    return random.choice(emotions), random.randint(70, 98)
+# --- OUTFIT DATABASE ---
+def get_outfits(vibe):
+    data = {
+        "happy": [
+            ("Bright Hoodie + Cargo", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "hoodie colorful pria"),
+            ("Colorful Streetwear", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "streetwear colorful"),
+        ],
+        "sad": [
+            ("Oversized Black Hoodie", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2", "hoodie hitam oversized"),
+            ("Dark Aesthetic Fit", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "outfit dark aesthetic"),
+        ],
+        "angry": [
+            ("Leather Jacket Fit", "https://images.unsplash.com/photo-1556821840-3a63f95609a7", "jaket kulit pria"),
+            ("Street Rebel Outfit", "https://images.unsplash.com/photo-1548624149-f1bc346fe750", "streetwear hitam pria"),
+        ],
+        "neutral": [
+            ("Minimal Clean Look", "https://images.unsplash.com/photo-1551028719-00167b16eac5", "kaos polos outfit pria"),
+            ("Smart Casual", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b", "smart casual pria"),
+        ],
+        "confident": [
+            ("Blazer + Sneaker", "https://images.unsplash.com/photo-1581044777550-4cfa60707c03", "blazer pria casual"),
+            ("All Black Fit", "https://images.unsplash.com/photo-1550991152-12469a931ca9", "outfit hitam keren"),
+        ],
+        "chill": [
+            ("Hoodie Santai", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2", "hoodie santai pria"),
+            ("Kaos + Shorts", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "outfit santai pria"),
+        ]
+    }
+    return data.get(vibe, data["neutral"])
 
 # --- AI COMMENT ---
-def ai_comment(mood):
-    comments = {
+def ai_comment(vibe):
+    return {
         "happy": "⚡ ENERGY HIGH — YOU'RE GLOWING",
-        "sad": "🌙 LOW VIBE — STYLE BOOST INITIATED",
+        "sad": "🌙 LOW VIBE — BOOSTING STYLE...",
         "angry": "🔥 INTENSE MODE — DOMINATE FIT",
-        "neutral": "🧠 BALANCED — CLEAN LOOK READY",
-        "surprise": "⚡ CHAOTIC ENERGY — UNIQUE STYLE"
-    }
-    return comments.get(mood, "SCANNING...")
+        "neutral": "🧠 CLEAN & BALANCED",
+        "confident": "💎 MAIN CHARACTER ENERGY",
+        "chill": "🌴 RELAX MODE ACTIVATED"
+    }[vibe]
 
 # --- TITLE ---
-st.markdown(
-    "<h1 class='cyber-title' data-text='VIBECHECK OUTFIT'>VibeCheck OUTFIT</h1>",
-    unsafe_allow_html=True
-)
-
-# --- MODE ---
-mode = st.toggle("🌗 ACTIVATE NEON MODE")
-
-if mode:
-    st.markdown("""
-    <style>
-    body {
-        background: radial-gradient(circle, #000000, #020024, #090979, #00d4ff);
-    }
-    </style>
-    """, unsafe_allow_html=True)
+st.markdown("<h1 class='cyber-title'>VibeCheck AI</h1>", unsafe_allow_html=True)
 
 # --- MAIN ---
 with st.container():
-    st.markdown("<div class='glass-panel'>", unsafe_allow_html=True)
+    st.markdown("<div class='glass'>", unsafe_allow_html=True)
 
-    col_cam, col_info = st.columns([1.5, 1])
+    col1, col2 = st.columns([1.5, 1])
 
-    with col_info:
-        st.markdown("### 🛠 SYSTEM_STATUS: ONLINE")
-        gender = st.selectbox("SELECT_IDENTITY", ["MALE", "FEMALE"])
-        st.caption("SCANNING BIOMETRICS...")
+    with col2:
+        st.markdown("### SYSTEM ONLINE")
+        gender = st.selectbox("IDENTITY", ["MALE", "FEMALE"])
 
-    with col_cam:
-        img_file = st.camera_input("CAPTURE")
+    with col1:
+        img = st.camera_input("CAPTURE FACE")
 
-    if img_file:
-        with st.spinner("🔍 ANALYZING VIBE..."):
+    if img:
+        with st.spinner("Analyzing vibe..."):
             time.sleep(1.5)
-            img = Image.open(img_file)
-            mood, conf = analyze_vibe(img)
+            vibe, conf = analyze_vibe()
 
-        st.markdown(f"## MOOD: <span style='color:#ff00ff'>{mood.upper()}</span>", unsafe_allow_html=True)
-
-        progress_bar = st.progress(0)
-        for i in range(conf):
-            time.sleep(0.005)
-            progress_bar.progress(i + 1)
-
+        st.markdown(f"## MOOD: **{vibe.upper()}**")
+        st.progress(conf / 100)
         st.write(f"Confidence: {conf}%")
 
-        st.info(ai_comment(mood))
+        st.info(ai_comment(vibe))
 
-        st.download_button(
-            "💾 SAVE RESULT",
-            data=img_file.getvalue(),
-            file_name="vibecheck.png",
-            mime="image/png"
-        )
+        st.markdown("### RECOMMENDED OUTFIT")
 
-        st.markdown("### 🛍 OUTFIT GENERATED")
-        outfits = get_outfit_data(mood, gender)
+        outfits = get_outfits(vibe)
 
-        cols = st.columns(3)
-        for i, item in enumerate(outfits):
-            with cols[i % 3]:
-                st.markdown(f"""
-                <div class='outfit-card'>
-                    <img src='{item['img']}' style='width:100%; border-radius:10px;'>
-                    <p>ID: VC-{i+100}</p>
-                    <b>{item['name']}</b>
-                </div>
-                """, unsafe_allow_html=True)
-
-                st.link_button(f"CHECKOUT_{i}", "https://shopee.co.id")
+        cols = st.columns(2)
+        for i, (name, img_url, keyword) in enumerate(outfits):
+            with cols[i % 2]:
+                st.image(img_url)
+                st.write(name)
+                st.link_button(
+                    "Buy on Shopee",
+                    f"https://shopee.co.id/search?keyword={keyword}"
+                )
 
     st.markdown("</div>", unsafe_allow_html=True)
 
 # FOOTER
-st.markdown("<center style='font-size:0.7rem;opacity:0.5;'>VIBECHECK_TELKOMUNIVERSITYSURABAYA_V15</center>", unsafe_allow_html=True)
+st.markdown("<center style='opacity:0.5;'>VibeCheck AI • Safe Mode • Cloud Ready</center>", unsafe_allow_html=True)
