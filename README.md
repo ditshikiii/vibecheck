@@ -1,27 +1,55 @@
-# ⚡ VibeCheck AI
+# ⚡ VibeCheck Outfit AI
 
-VibeCheck AI adalah web app berbasis Streamlit yang menggunakan AI untuk mendeteksi emosi dari wajah dan memberikan rekomendasi outfit sesuai mood.
+VibeCheck Outfit adalah aplikasi berbasis **Streamlit** yang mampu:
+- Menganalisis mood (vibe) pengguna melalui kamera
+- Memberikan rekomendasi outfit sesuai vibe
+- Menyediakan link pembelian langsung ke Shopee
 
-## 🚀 Fitur
-- Deteksi emosi wajah (happy, sad, angry, dll)
-- Kamera real-time
-- Rekomendasi outfit berdasarkan mood
-- UI cyberpunk futuristik
+Aplikasi ini dirancang dengan tampilan **cyberpunk / futuristic UI** untuk memberikan pengalaman interaktif dan modern.
 
-## 🛠 Teknologi
-- Streamlit
-- DeepFace
-- OpenCV (Headless)
-- Python
+---
 
-## 📸 Cara Pakai
-1. Buka web
-2. Izinkan akses kamera
-3. Ambil foto
-4. Lihat hasil emosi & rekomendasi outfit
+## 🚀 Fitur Utama
 
-## 🌐 Demo
-(hehe)
+✨ **Face Capture**
+- Menggunakan kamera langsung dari browser
+- Mengambil gambar pengguna secara real-time
 
-## 👤 Author
-Auzan Aditya
+🧠 **AI Vibe Detection (Simulasi)**
+- Mendeteksi mood:  
+  - Happy 😊  
+  - Sad 😢  
+  - Angry 😡  
+  - Neutral 😐  
+- Menampilkan tingkat confidence (%)
+
+👕 **Outfit Recommendation**
+- Rekomendasi outfit berdasarkan:
+  - Mood (vibe)
+  - Gender (Male / Female)
+- Setiap outfit dilengkapi:
+  - Gambar
+  - Nama outfit
+  - Link pembelian (Shopee)
+
+🛒 **Direct Shopping Integration**
+- Tombol langsung menuju pencarian produk di Shopee
+
+🎨 **Cyber UI Design**
+- Tema gelap futuristik
+- Efek hover interaktif
+- Tampilan clean dan modern
+
+---
+
+## 🧩 Teknologi yang Digunakan
+
+- **Python**
+- **Streamlit**
+- **PIL (Python Imaging Library)**
+- **Unsplash API (image source)**
+- **Shopee Search Integration**
+
+---
+
+## 📂 Struktur Program
