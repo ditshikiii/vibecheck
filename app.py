@@ -4,7 +4,7 @@ import time
 from PIL import Image
 
 # --- CONFIG ---
-st.set_page_config(page_title="VibeCheck AI", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="VibeCheck Outfit", page_icon="⚡", layout="wide")
 
 # --- STYLE ---
 st.markdown("""
@@ -91,7 +91,7 @@ def ai_comment(vibe):
     }[vibe]
 
 # --- TITLE ---
-st.markdown("<h1 class='cyber-title'>VibeCheck AI</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='cyber-title'>VibeCheck Outfit</h1>", unsafe_allow_html=True)
 
 # --- MAIN ---
 with st.container():
@@ -134,4 +134,4 @@ with st.container():
     st.markdown("</div>", unsafe_allow_html=True)
 
 # FOOTER
-st.markdown("<center style='opacity:0.5;'>VibeCheck AI • Safe Mode • Cloud Ready</center>", unsafe_allow_html=True)
+st.markdown("<center style='opacity:0.5;'>VibeCheck Outfit • TELYUSBYGACOR • LESGOOBMCC</center>", unsafe_allow_html=True)
