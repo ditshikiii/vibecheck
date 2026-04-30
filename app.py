@@ -4,7 +4,7 @@ import time
 from PIL import Image
 
 # --- CONFIG ---
-st.set_page_config(page_title="VibeCheck Outfit", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="VibeCheck AI", page_icon="⚡", layout="wide")
 
 # --- STYLE ---
 st.markdown("""
@@ -46,38 +46,82 @@ body, .stApp {
 
 # --- VIBE SYSTEM ---
 def analyze_vibe():
-    vibes = ["happy", "sad", "angry", "neutral", "confident", "chill"]
+    vibes = ["happy", "sad", "angry", "neutral"]
     return random.choice(vibes), random.randint(75, 98)
 
 # --- OUTFIT DATABASE ---
-def get_outfits(vibe):
+def get_outfits(vibe, gender):
     data = {
-        "happy": [
-            ("Bright Hoodie + Cargo", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "hoodie colorful pria"),
-            ("Colorful Streetwear", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "streetwear colorful"),
-        ],
-        "sad": [
-            ("Oversized Black Hoodie", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2", "hoodie hitam oversized"),
-            ("Dark Aesthetic Fit", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "outfit dark aesthetic"),
-        ],
-        "angry": [
-            ("Leather Jacket Fit", "https://images.unsplash.com/photo-1556821840-3a63f95609a7", "jaket kulit pria"),
-            ("Street Rebel Outfit", "https://images.unsplash.com/photo-1548624149-f1bc346fe750", "streetwear hitam pria"),
-        ],
-        "neutral": [
-            ("Minimal Clean Look", "https://images.unsplash.com/photo-1551028719-00167b16eac5", "kaos polos outfit pria"),
-            ("Smart Casual", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b", "smart casual pria"),
-        ],
-        "confident": [
-            ("Blazer + Sneaker", "https://images.unsplash.com/photo-1581044777550-4cfa60707c03", "blazer pria casual"),
-            ("All Black Fit", "https://images.unsplash.com/photo-1550991152-12469a931ca9", "outfit hitam keren"),
-        ],
-        "chill": [
-            ("Hoodie Santai", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2", "hoodie santai pria"),
-            ("Kaos + Shorts", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "outfit santai pria"),
-        ]
+        "happy": {
+            "MALE": [
+                ("Bright Hoodie + Cargo", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "hoodie colorful pria"),
+                ("Colorful Streetwear", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "streetwear colorful pria"),
+                ("Denim Jacket Casual", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b", "jaket denim pria"),
+                ("Graphic Tee Style", "https://images.unsplash.com/photo-1556821840-3a63f95609a7", "kaos graphic pria"),
+                ("Summer Fit Shorts", "https://images.unsplash.com/photo-1541099649105-f69ad21f3246", "outfit summer pria")
+            ],
+            "FEMALE": [
+                ("Pastel Hoodie Look", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2", "hoodie pastel wanita"),
+                ("Cute Skirt Outfit", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "rok lucu wanita"),
+                ("Korean Style Fit", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "outfit korea wanita"),
+                ("Crop Top Casual", "https://images.unsplash.com/photo-1551028719-00167b16eac5", "crop top wanita"),
+                ("Colorful Street Style", "https://images.unsplash.com/photo-1550991152-12469a931ca9", "streetwear wanita")
+            ]
+        },
+
+        "sad": {
+            "MALE": [
+                ("Oversized Black Hoodie", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2", "hoodie hitam oversized pria"),
+                ("Dark Minimal Fit", "https://images.unsplash.com/photo-1551028719-00167b16eac5", "outfit gelap pria"),
+                ("Beanie + Hoodie", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "beanie pria"),
+                ("Sweatpants Style", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "sweatpants pria"),
+                ("Monochrome Outfit", "https://images.unsplash.com/photo-1556821840-3a63f95609a7", "outfit hitam putih pria")
+            ],
+            "FEMALE": [
+                ("Oversized Hoodie Girl", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2", "hoodie oversized wanita"),
+                ("Soft Aesthetic Fit", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "outfit aesthetic wanita"),
+                ("Long Coat Style", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "coat wanita"),
+                ("Dark Casual Look", "https://images.unsplash.com/photo-1551028719-00167b16eac5", "outfit gelap wanita"),
+                ("Sweater Calm Style", "https://images.unsplash.com/photo-1550991152-12469a931ca9", "sweater wanita")
+            ]
+        },
+
+        "angry": {
+            "MALE": [
+                ("Leather Jacket Fit", "https://images.unsplash.com/photo-1556821840-3a63f95609a7", "jaket kulit pria"),
+                ("All Black Streetwear", "https://images.unsplash.com/photo-1548624149-f1bc346fe750", "streetwear hitam pria"),
+                ("Ripped Jeans Style", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b", "jeans sobek pria"),
+                ("Combat Boots Fit", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "boots pria"),
+                ("Hoodie Dark Style", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "hoodie hitam pria")
+            ],
+            "FEMALE": [
+                ("Black Leather Girl", "https://images.unsplash.com/photo-1556821840-3a63f95609a7", "jaket kulit wanita"),
+                ("Edgy Street Style", "https://images.unsplash.com/photo-1548624149-f1bc346fe750", "streetwear wanita"),
+                ("Crop Jacket Fit", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b", "jaket crop wanita"),
+                ("Dark Outfit Girl", "https://images.unsplash.com/photo-1551028719-00167b16eac5", "outfit hitam wanita"),
+                ("Boots Outfit", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "boots wanita")
+            ]
+        },
+
+        "neutral": {
+            "MALE": [
+                ("Basic White Tee", "https://images.unsplash.com/photo-1551028719-00167b16eac5", "kaos putih pria"),
+                ("Smart Casual Fit", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b", "smart casual pria"),
+                ("Clean Denim Style", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "jeans pria"),
+                ("Minimal Hoodie", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2", "hoodie polos pria"),
+                ("Office Casual", "https://images.unsplash.com/photo-1550991152-12469a931ca9", "outfit kerja pria")
+            ],
+            "FEMALE": [
+                ("Minimal Dress", "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2", "dress minimal wanita"),
+                ("Clean Casual Look", "https://images.unsplash.com/photo-1520975916090-3105956dac38", "outfit simple wanita"),
+                ("Denim + Tee", "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c", "jeans wanita"),
+                ("Soft Office Fit", "https://images.unsplash.com/photo-1551028719-00167b16eac5", "outfit kerja wanita"),
+                ("Neutral Style Outfit", "https://images.unsplash.com/photo-1550991152-12469a931ca9", "outfit netral wanita")
+            ]
+        }
     }
-    return data.get(vibe, data["neutral"])
+
+    return data.get(vibe, data["neutral"])[gender]
 
 # --- AI COMMENT ---
 def ai_comment(vibe):
@@ -85,9 +129,7 @@ def ai_comment(vibe):
         "happy": "⚡ ENERGY HIGH — YOU'RE GLOWING",
         "sad": "🌙 LOW VIBE — BOOSTING STYLE...",
         "angry": "🔥 INTENSE MODE — DOMINATE FIT",
-        "neutral": "🧠 CLEAN & BALANCED",
-        "confident": "💎 MAIN CHARACTER ENERGY",
-        "chill": "🌴 RELAX MODE ACTIVATED"
+        "neutral": "🧠 CLEAN & BALANCED"
     }[vibe]
 
 # --- TITLE ---
@@ -100,7 +142,7 @@ with st.container():
     col1, col2 = st.columns([1.5, 1])
 
     with col2:
-        st.markdown("### SYSTEM ONLINE")
+        st.markdown("### SYSTEM REQUIRED : ONLINE")
         gender = st.selectbox("IDENTITY", ["MALE", "FEMALE"])
 
     with col1:
@@ -119,7 +161,7 @@ with st.container():
 
         st.markdown("### RECOMMENDED OUTFIT")
 
-        outfits = get_outfits(vibe)
+        outfits = get_outfits(vibe, gender)
 
         cols = st.columns(2)
         for i, (name, img_url, keyword) in enumerate(outfits):
