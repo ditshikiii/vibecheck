@@ -8,7 +8,7 @@ import urllib.parse
 import random
 
 # --- CONFIG ---
-st.set_page_config(page_title="VibeCheck AI - UHD", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="VibeWear AI - UHD", page_icon="⚡", layout="wide")
 
 # --- CYBER STYLE (TIDAK DIUBAH) ---
 st.markdown("""
@@ -128,7 +128,7 @@ def analyze_skin_tone(img):
         return None, None
 
 # --- TITLE ---
-st.markdown("<h1 class='cyber-title'>VibeCheck AI</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='cyber-title'>VibeWear AI</h1>", unsafe_allow_html=True)
 
 with st.container():
     st.markdown("<div class='glass-panel'>", unsafe_allow_html=True)
